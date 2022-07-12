@@ -606,4 +606,3 @@ if __name__ == "__main__":
     generate_camera_traj_file(render_config, overwrite=False)
 
     render_dataset_pano(render_config)
-    

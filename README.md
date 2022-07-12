@@ -1,73 +1,3 @@
-# New Features
-
-Features:
-- [x] Correct the texture loading error caused by std::sort in windows. Wrap GCC std::sort to sort_linux.dll;
-- [x] Parse input parameters by GFlags;
-- [x] Render Path Loader C++;
-- [x] Perspective images motion flow;
-- [x] Render CubeMap RGB image, depth map and Optical Flow; 
-- [x] Perspective unavailable pixel mask;
-- [x] Panoramic RGB images;
-- [x] Panoramic Depth images;
-- [ ] Panoramic Optical Flow;
-- [ ] Panoramic Optical Flow occlusion maps;
-- [x] Panoramic unavailable pixel mask (The pixel value depth less than 0 is unavailable pixels);
-- [ ] Panoramic mirror rendering;
-- [ ] Pre-build binary for the Windows 10;
-- [ ] Dockerfile base on ubuntu 20.04.
-
-Test on:
-
-**Windows**:
-  - Windows 10
-  - Visual Studio 2019
-  - GLEW: 2.1.0
-  - Pangolin: 0.6
-  - Eigen: 3.3.7
-  - Glog: 0.5.0
-  - Gflag: 2.2.2
-
-**linux**:
-  - ubuntu 20.04
-  - GCC: 9.3.0
-  - GLEW: 2.1.0
-  - Pangolin: 0.6
-  - Eigen: 3.3.7
-  - Glog: 0.5.0
-  - Gflag: 2.2.2
-
-Note in windows in the `NVIDIA Control Panel` please select the `Preferred graphics processor` to `High-performance NVIDIA processor`.
-
-## Coordinate System
-
-**Replica Coordinate System**:
-
-<p align="center">
-<img src="./assets/coord_hotel.png" align=middle alt="method_pipeline_0" style="width:600px;"/>
-<figcaption>Replica Hotel coordinate system.</figcaption>
-</p>
-
-**Panoramic Image Coordinate System**:
-
-<p align="center">
-<img src="./assets/coordinate_system.svg" align=middle alt="method_pipeline_0" style="width:800px;"/>
-<figcaption>The transformation between coordinate systems.</figcaption>
-</p>
-
-## How To Use
-
-**Camera Path**
-
-The rendering camera pose can load from camera path file, the `*.csv` camera path file composes with pose index, pose center and pose direction.
-The camera path coordinate system is same as the Replica coordinate system, and the pose direction is Euler angle.
-
-```
-# pose_index, pose_center_x, pose_center_y,  pose_center_z, pose_dir_x, pose_dir_y, pose_dir_z
-0 2.1 1.2 0.2 0.0 0.0 10.0
-1 2.1 1.2 0.2 0.0 0.0 13.0
-2 ..........
-```
-
 **Rendering Programs**
 
 The `ReplicaRendererCubemap.exe` is for render the CubeMap (perspective view) RGB image, depth map and optical flow.
@@ -168,10 +98,6 @@ To download and decompress the dataset use the `download.sh` script:
 ./download.sh /path/to/replica_v1
 ```
 
-### Download on Windows
-
-Execute `win_download.bat` to download Replica.
-
 ## Replica SDK
 
 ### Setup
@@ -186,19 +112,6 @@ It requires the dependencies of
 [Eigen](https://github.com/eigenteam/eigen-git-mirror)
 to be installed. If you wish to use the headless renderer ensure you have the libegl1-mesa-dev package.
 
-### ReplicaViewer
-
-ReplicaViewer is an interactive UI to explore the Replica Dataset. 
-
-```
-./build/bin/ReplicaViewer mesh.ply /path/to/atlases [mirrorFile]
-```
-
-![ReplicaViewer](./assets/ReplicaViewer.png)
-
-The exposure value for rendering from the HDR textures can be adjusted on the
-top left. 
-
 ### ReplicaRenderer
 
 The ReplicaRenderer shows how to render out images from a Replica for a
@@ -206,7 +119,7 @@ programmatically defined trajectory without UI. This executable can be run
 headless on a server if so desired. 
 
 ```
-./build/bin/ReplicaRenderer mesh.ply textures glass.sur
+python python/replica_render.py --width 1024 --height 512
 ```
 
 ## Replica and AI Habitat
