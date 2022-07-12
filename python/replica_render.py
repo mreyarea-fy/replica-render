@@ -7,6 +7,7 @@ import subprocess
 import platform
 import csv
 import argparse
+import math
 
 from utility import fs_utility
 from utility import depth_io
@@ -116,7 +117,7 @@ class ReplicaRenderConfig():
         render_panorama_program_filepath = program_root_dir + "ReplicaRendererPanorama.exe"
         render_cubemap_program_filepath = program_root_dir + "ReplicaRendererCubemap.exe"
     elif platform.system() == "Linux":
-        program_root_dir = "/home/manuel/code/render_replica/build/ReplicaSDK/"
+        program_root_dir = "/home/manuel/code/replica-render/build/ReplicaSDK/"
         render_panorama_program_filepath = os.path.join(program_root_dir, "ReplicaRendererPanorama")
         render_cubemap_program_filepath = os.path.join(program_root_dir, "ReplicaRendererCubemap")
 
@@ -124,7 +125,7 @@ class ReplicaRenderConfig():
     renderRGBEnable = True
     renderDepthEnable = True
     renderMotionVectorEnable = False
-    renderUnavailableMask = True
+    renderUnavailableMask = False
 
     # camera render path
     render_camera_path_filename = "camera_traj.csv"
@@ -331,6 +332,7 @@ def render_pano(render_config, render_folder_name, camera_traj_file):
     # render output folder
     render_scene_output_dir = os.path.join(ReplicaRenderConfig.output_root_dir, render_folder_name, ReplicaRenderConfig.output_pano_dir)
     render_args.append("--outputDir")
+    print(render_scene_output_dir)
     render_args.append(render_scene_output_dir)
     fs_utility.dir_make(render_scene_output_dir)
 
@@ -442,6 +444,7 @@ def render_dataset_pano(render_configs):
     :param render_configs: The render configuration
     :type render_configs: ReplicaRenderConfig
     """
+
     for config_folder in render_configs.input_config_folder_list:
         if not render_configs.render_scene_configs[config_folder]["scene_name"] in ReplicaDataset.replica_scene_name_list:
             log.error("folder scene {} is unavailable".format(config_folder))
@@ -572,21 +575,35 @@ def collect_data(rendering_result_dir, release_result_dir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--render_type", type=str, default="pano", choices=["panorama", "cubemap"])
+    parser.add_argument("--render_type", type=str, default="panorama", choices=["panorama", "cubemap"])
     parser.add_argument("--height", type=int, default=512)
     parser.add_argument("--width", type=int, default=1024)
     opt = parser.parse_args()
 
+    if not math.log2(opt.width).is_integer():
+        log.error(f"Width {opt.width} should be power of 2")
+
+    suffix = None
+    if opt.width == 256:
+        suffix = "256"
+    elif opt.width == 512:
+        suffix = "512"
+    elif opt.width == 1024:
+        suffix = "1k"
+    elif opt.width == 2048:
+        suffix = "2k"
+    elif opt.width == 4096:
+        suffix = "4k"
+
     render_config = ReplicaRenderConfig()
     render_config.input_config_root_dir = "../config_files"
     render_config.output_root_dir = "/home/manuel/data/Replica_360/"
+    ReplicaRenderConfig.output_pano_dir = ReplicaRenderConfig.output_pano_dir.split("/")[0] + f"_{suffix}/"
     config_folders = [os.path.basename(x[0]) for x in os.walk(render_config.input_config_root_dir)]
     for cf in config_folders:
         render_config.add_scene_sub_folder(cf, opt)
 
     generate_camera_traj_file(render_config, overwrite=False)
 
-    for idx, cf in enumerate(render_config.input_config_folder_list):
-        dir_config = render_config.input_config_folder_list[idx]
-        render_pano(render_config.render_scene_configs[dir_config], render_config.input_config_folder_list[idx],
-                    render_config.input_config_folder_list[idx])
+    render_dataset_pano(render_config)
+    

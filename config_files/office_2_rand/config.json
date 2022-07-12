@@ -1,6 +1,6 @@
 {
     "scene_name": "office_2",
-    "render_type": "pano",
+    "render_type": "panoramic",
     "image": {
         "width": 320,
         "height": 320,
