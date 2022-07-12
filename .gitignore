@@ -1,0 +1,7 @@
+build
+build_*
+.vscode
+*~
+*.swp
+__pycache__/
+.idea
