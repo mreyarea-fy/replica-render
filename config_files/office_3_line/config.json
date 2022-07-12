@@ -1,0 +1,39 @@
+{
+    "scene_name": "office_3",
+    "render_type": "pano",
+    "image": {
+        "width": 320,
+        "height": 320,
+        "fps": 25
+    },
+    "render_params": {
+        "texture_exposure": 0.01,
+        "texture_gamma": 1.67,
+        "texture_saturation": 1.5
+    },
+    "render_view": {
+        "center_view": false,
+        "traj_view": true
+    },
+    "post_proc": {
+        "convert_format_traj": false,
+        "convert_format_center": false,
+        "generate_msg_file": false
+    },
+    "camera_traj": {
+        "type": "line",
+        "lock_direction": false,
+        "grid_size": 10,
+        "radius": 2.0,
+        "center_position": {
+            "x": -0.6558,
+            "y": -1.18,
+            "z": 0.2 
+        },
+        "start_orientations": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 90.0
+        }
+    }
+}
