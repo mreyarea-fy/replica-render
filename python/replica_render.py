@@ -79,18 +79,18 @@ class ReplicaDataset():
     replica_cubemap_rgb_backward_of_forwardwarp_filename_exp = "{}_{:04d}_{}_motionvector_backward_rgb_forwardwarp.jpg"
 
     # panoramic filename expresion
-    replica_pano_rgb_image_filename_exp = "{}_{:04d}_rgb_pano.png"
+    replica_pano_rgb_image_filename_exp = "{}_{:04d}_pano_rgb.png"
 
-    replica_pano_depthmap_filename_exp = "{}_{:04d}_depth_pano.dpt"
-    replica_pano_depthmap_visual_filename_exp = "{}_{:04d}_depth_pano_visual.jpg"
-    replica_pano_depthmap_mask_filename_exp = "{}_{:04d}_mask_pano.png"
+    replica_pano_depthmap_filename_exp = "{}_{:04d}_pano_depth.dpt"
+    replica_pano_depthmap_visual_filename_exp = "{}_{:04d}_pano_vis.jpg"
+    replica_pano_depthmap_mask_filename_exp = "{}_{:04d}_pano_mask.png"
 
     replica_pano_opticalflow_forward_filename_exp = "{}_{:04d}_opticalflow_forward_pano.flo"
     replica_pano_opticalflow_forward_visual_filename_exp = "{}_{:04d}_opticalflow_forward_pano_visual.jpg"
     replica_pano_opticalflow_backward_filename_exp = "{}_{:04d}_opticalflow_backward_pano.flo"
     replica_pano_opticalflow_backward_visual_filename_exp = "{}_{:04d}_opticalflow_backward_pano_visual.jpg"
 
-    replica_pano_mask_filename_exp = "{}_{:04d}_mask_pano.png"
+    replica_pano_mask_filename_exp = "{}_{:04d}_pano_mask.png"
 
     # warp result
     replica_pano_rgb_froward_of_forwardwarp_filename_exp = "{}_{:04d}_opticalflow_forward_rgb_forwardwarp.jpg"
