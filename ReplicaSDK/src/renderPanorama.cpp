@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
       // Download and save
       render.Download(image.ptr, GL_RGB, GL_UNSIGNED_BYTE);
       char cubemapFilename[1024];
-      snprintf(cubemapFilename, 1024, "%s/%s_%04zu_rgb_pano.jpg", outputDir.c_str(), prefix_fn.c_str(), frame_index);
+      snprintf(cubemapFilename, 1024, "%s/%s_%04zu_pano_rgb.png", outputDir.c_str(), prefix_fn.c_str(), frame_index);
       pangolin::SaveImage(image.UnsafeReinterpret<uint8_t>(),
                           pangolin::PixelFormatFromString("RGB24"),
                           std::string(cubemapFilename));
@@ -230,7 +230,7 @@ int main(int argc, char *argv[])
         depthFrameBuffer.Unbind();
         depthTexture.Download(depthImage.ptr, GL_RED, GL_FLOAT);
         char depthfilename[1024];
-        snprintf(depthfilename, 1024, "%s/%s_%04zu_depth_pano.dpt", outputDir.c_str(), prefix_fn.c_str(), frame_index);
+        snprintf(depthfilename, 1024, "%s/%s_%04zu_pano_depth.dpt", outputDir.c_str(), prefix_fn.c_str(), frame_index);
         saveDepthmap2dpt(depthfilename, depthImage.ptr, width, height);
     }
 
