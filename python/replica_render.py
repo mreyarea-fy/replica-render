@@ -70,31 +70,31 @@ class ReplicaDataset():
     
     replica_cubemap_face_abbr = ["R", "L", "U", "D", "F", "B"] #  +x, -x, +y, -y, +z, -z
     # {:04d} is the frame index
-    replica_cubemap_rgb_image_filename_exp = "{:04d}_{}_rgb.jpg"
-    replica_cubemap_depthmap_filename_exp = "{:04d}_{}_depth.dpt"
-    replica_cubemap_opticalflow_forward_filename_exp = "{:04d}_{}_motionvector_forward.flo"
-    replica_cubemap_opticalflow_backward_filename_exp = "{:04d}_{}_motionvector_backward.flo"
+    replica_cubemap_rgb_image_filename_exp = "{}_{:04d}_{}_rgb.jpg"
+    replica_cubemap_depthmap_filename_exp = "{}_{:04d}_{}_depth.dpt"
+    replica_cubemap_opticalflow_forward_filename_exp = "{}_{:04d}_{}_motionvector_forward.flo"
+    replica_cubemap_opticalflow_backward_filename_exp = "{}_{:04d}_{}_motionvector_backward.flo"
 
-    replica_cubemap_rgb_froward_of_forwardwarp_filename_exp = "{:04d}_{}_motionvector_forward_rgb_forwardwarp.jpg"
-    replica_cubemap_rgb_backward_of_forwardwarp_filename_exp = "{:04d}_{}_motionvector_backward_rgb_forwardwarp.jpg"
+    replica_cubemap_rgb_froward_of_forwardwarp_filename_exp = "{}_{:04d}_{}_motionvector_forward_rgb_forwardwarp.jpg"
+    replica_cubemap_rgb_backward_of_forwardwarp_filename_exp = "{}_{:04d}_{}_motionvector_backward_rgb_forwardwarp.jpg"
 
     # panoramic filename expresion
-    replica_pano_rgb_image_filename_exp = "{:04d}_rgb_pano.png"
+    replica_pano_rgb_image_filename_exp = "{}_{:04d}_rgb_pano.png"
 
-    replica_pano_depthmap_filename_exp = "{:04d}_depth_pano.dpt"
-    replica_pano_depthmap_visual_filename_exp = "{:04d}_depth_pano_visual.jpg"
-    replica_pano_depthmap_mask_filename_exp = "{:04d}_mask_pano.png"
+    replica_pano_depthmap_filename_exp = "{}_{:04d}_depth_pano.dpt"
+    replica_pano_depthmap_visual_filename_exp = "{}_{:04d}_depth_pano_visual.jpg"
+    replica_pano_depthmap_mask_filename_exp = "{}_{:04d}_mask_pano.png"
 
-    replica_pano_opticalflow_forward_filename_exp = "{:04d}_opticalflow_forward_pano.flo"
-    replica_pano_opticalflow_forward_visual_filename_exp = "{:04d}_opticalflow_forward_pano_visual.jpg"
-    replica_pano_opticalflow_backward_filename_exp = "{:04d}_opticalflow_backward_pano.flo"
-    replica_pano_opticalflow_backward_visual_filename_exp = "{:04d}_opticalflow_backward_pano_visual.jpg"
+    replica_pano_opticalflow_forward_filename_exp = "{}_{:04d}_opticalflow_forward_pano.flo"
+    replica_pano_opticalflow_forward_visual_filename_exp = "{}_{:04d}_opticalflow_forward_pano_visual.jpg"
+    replica_pano_opticalflow_backward_filename_exp = "{}_{:04d}_opticalflow_backward_pano.flo"
+    replica_pano_opticalflow_backward_visual_filename_exp = "{}_{:04d}_opticalflow_backward_pano_visual.jpg"
 
-    replica_pano_mask_filename_exp = "{:04d}_mask_pano.png"
+    replica_pano_mask_filename_exp = "{}_{:04d}_mask_pano.png"
 
     # warp result
-    replica_pano_rgb_froward_of_forwardwarp_filename_exp = "{:04d}_opticalflow_forward_rgb_forwardwarp.jpg"
-    replica_pano_rgb_backward_of_forwardwarp_filename_exp = "{:04d}_opticalflow_backward_rgb_forwardwarp.jpg"
+    replica_pano_rgb_froward_of_forwardwarp_filename_exp = "{}_{:04d}_opticalflow_forward_rgb_forwardwarp.jpg"
+    replica_pano_rgb_backward_of_forwardwarp_filename_exp = "{}_{:04d}_opticalflow_backward_rgb_forwardwarp.jpg"
 
 
 class ReplicaRenderConfig():
@@ -332,9 +332,12 @@ def render_pano(render_config, render_folder_name, camera_traj_file):
     # render output folder
     render_scene_output_dir = os.path.join(ReplicaRenderConfig.output_root_dir, render_folder_name, ReplicaRenderConfig.output_pano_dir)
     render_args.append("--outputDir")
-    print(render_scene_output_dir)
     render_args.append(render_scene_output_dir)
     fs_utility.dir_make(render_scene_output_dir)
+
+    # prefix filename
+    render_args.append("--prefix_fn")
+    render_args.append(render_folder_name)
 
     log.info(" ".join(render_args))
 
@@ -371,6 +374,8 @@ def render_cubemap(render_config, render_folder_name, camera_traj_file):
     render_args.append(camera_traj_file)
     render_args.append("--outputDir")
     render_args.append(render_scene_output_dir)
+    render_args.append("--prefix_fn")
+    render_args.append(render_folder_name)
     render_args.append("--texture_exposure")
     render_args.append(str(render_config["render_params"]["texture_exposure"]))
     render_args.append("--texture_gamma")
@@ -414,8 +419,9 @@ def post_render(render_configs, render_folder_name, scene_frame_number):
                 if image_index % 10 == 0:
                     log.info("Image index: {}".format(image_index))
 
-                erp_depth_filepath = pano_output_dir + ReplicaDataset.replica_pano_depthmap_filename_exp.format(image_index)
-                erp_depth_visual_filepath = pano_output_dir + ReplicaDataset.replica_pano_depthmap_visual_filename_exp.format(image_index)
+                erp_depth_filepath = pano_output_dir + \
+                                     ReplicaDataset.replica_pano_depthmap_filename_exp.format(render_folder_name, image_index)
+                erp_depth_visual_filepath = pano_output_dir + ReplicaDataset.replica_pano_depthmap_visual_filename_exp.format(render_folder_name, image_index)
                 erp_depth_data = depth_io.read_dpt(erp_depth_filepath)
                 depth_io.depth_visual_save(erp_depth_data, erp_depth_visual_filepath)
 
@@ -424,14 +430,14 @@ def post_render(render_configs, render_folder_name, scene_frame_number):
                 if image_index % 10 == 0:
                     log.info("Image index: {}".format(image_index))
 
-                erp_of_filepath = pano_output_dir + ReplicaDataset.replica_pano_opticalflow_forward_filename_exp.format(image_index)
-                erp_of_visual_filepath = pano_output_dir + ReplicaDataset.replica_pano_opticalflow_forward_visual_filename_exp.format(image_index)
+                erp_of_filepath = pano_output_dir + ReplicaDataset.replica_pano_opticalflow_forward_filename_exp.format(render_folder_name, image_index)
+                erp_of_visual_filepath = pano_output_dir + ReplicaDataset.replica_pano_opticalflow_forward_visual_filename_exp.format(render_folder_name, image_index)
                 erp_of_data = flow_io.flow_read(erp_of_filepath)
                 erp_of_vis = flow_vis.flow_to_color(erp_of_data, min_ratio=0.1, max_ratio=0.9)
                 image_io.image_save(erp_of_vis, erp_of_visual_filepath)
 
-                erp_of_filepath = pano_output_dir + ReplicaDataset.replica_pano_opticalflow_backward_filename_exp.format(image_index)
-                erp_of_visual_filepath = pano_output_dir + ReplicaDataset.replica_pano_opticalflow_backward_visual_filename_exp.format(image_index)
+                erp_of_filepath = pano_output_dir + ReplicaDataset.replica_pano_opticalflow_backward_filename_exp.format(render_folder_name, image_index)
+                erp_of_visual_filepath = pano_output_dir + ReplicaDataset.replica_pano_opticalflow_backward_visual_filename_exp.format(render_folder_name, image_index)
                 erp_of_data = flow_io.flow_read(erp_of_filepath)
                 erp_of_vis = flow_vis.flow_to_color(erp_of_data, min_ratio=0.1, max_ratio=0.9)
                 image_io.image_save(erp_of_vis, erp_of_visual_filepath)
@@ -596,7 +602,7 @@ if __name__ == "__main__":
         suffix = "4k"
 
     render_config = ReplicaRenderConfig()
-    render_config.input_config_root_dir = "../config_files"
+    render_config.input_config_root_dir = "config_files"
     render_config.output_root_dir = "/home/manuel/data/Replica_360/"
     ReplicaRenderConfig.output_pano_dir = ReplicaRenderConfig.output_pano_dir.split("/")[0] + f"_{suffix}/"
     config_folders = [os.path.basename(x[0]) for x in os.walk(render_config.input_config_root_dir)]

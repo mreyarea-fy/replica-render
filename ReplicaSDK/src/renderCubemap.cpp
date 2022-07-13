@@ -19,6 +19,7 @@ DEFINE_string(atlasFolder, "", "The atlas folder path.");
 DEFINE_string(mirrorFile, "", "The mirror file path.");
 DEFINE_string(cameraPoseFile, "", "The camera pose file path.");
 DEFINE_string(outputDir, "", "The data output folder path.");
+DEFINE_string(prefix_fn, "", "prefix for filename");
 
 DEFINE_int32(imageSize, 640, "The output image width.");
 
@@ -58,6 +59,8 @@ int main(int argc, char* argv[]) {
   fs::directory_entry outputDir_dir{ fs::path(outputDir) };
   ASSERT(outputDir_dir.exists());
   const std::string cameraposeFile(FLAGS_cameraPoseFile);
+  const std::string prefix_fn = std::string(FLAGS_prefix_fn);
+  ASSERT(prefix_fn != "");
 
   const int width = FLAGS_imageSize;
   const int height = FLAGS_imageSize;
@@ -241,7 +244,7 @@ int main(int argc, char* argv[]) {
             // Download and save
             render.Download(image.ptr, GL_RGB, GL_UNSIGNED_BYTE);
             char cubemapFilename[1024];
-            snprintf(cubemapFilename, 1024, "%s/%04zu_%s_rgb.jpg", outputDir.c_str(), frame_index, face_abbr);
+            snprintf(cubemapFilename, 1024, "%s/%s_%04zu_%s_rgb.jpg", outputDir.c_str(), prefix_fn.c_str(), frame_index, face_abbr);
             pangolin::SaveImage(image.UnsafeReinterpret<uint8_t>(),
                 pangolin::PixelFormatFromString("RGB24"),
                 std::string(cubemapFilename));
@@ -262,7 +265,7 @@ int main(int argc, char* argv[]) {
             depthFrameBuffer.Unbind();
             depthTexture.Download(depthImage.ptr, GL_RED, GL_FLOAT);
             char depthfilename[1024];
-            snprintf(depthfilename, 1024, "%s/%04zu_%s_depth.dpt", outputDir.c_str(), frame_index, face_abbr);
+            snprintf(depthfilename, 1024, "%s/%s_%04zu_%s_depth.dpt", outputDir.c_str(), prefix_fn.c_str(), frame_index, face_abbr);
             saveDepthmap2dpt(depthfilename, depthImage.ptr, width, height);
         }
 
@@ -287,7 +290,7 @@ int main(int argc, char* argv[]) {
             opticalflowFrameBuffer.Unbind();
             opticalflowTexture.Download(opticalFlow_forward.ptr, GL_RGBA, GL_FLOAT);
             char filename[1024];
-            snprintf(filename, 1024, "%s/%04zu_%s_motionvector_forward.flo", outputDir.c_str(), frame_index, face_abbr);
+            snprintf(filename, 1024, "%s/%s_%04zu_%s_motionvector_forward.flo", outputDir.c_str(), prefix_fn.c_str(), frame_index, face_abbr);
             saveMotionVector(filename, opticalFlow_forward.ptr, width, height, true); // output optical flow to file
             // save the target points depth.
 
@@ -309,7 +312,7 @@ int main(int argc, char* argv[]) {
             glPopAttrib(); //GL_VIEWPORT_BIT
             opticalflowFrameBuffer.Unbind();
             opticalflowTexture.Download(opticalFlow_backward.ptr, GL_RGBA, GL_FLOAT);
-            snprintf(filename, 1024, "%s/%04zu_%s_motionvector_backward.flo", outputDir.c_str(), (frame_index + 1) % numFrames, face_abbr);
+            snprintf(filename, 1024, "%s/%s_%04zu_%s_motionvector_backward.flo", outputDir.c_str(), prefix_fn.c_str(), (frame_index + 1) % numFrames, face_abbr);
             saveMotionVector(filename, opticalFlow_backward.ptr, width, height, true); // output optical flow to file
         }
     }
